@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1684046814517-1" author="KarimKhasan (generated)">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                        minValue="1" sequenceName="couriers_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1684046814517-2" author="KarimKhasan (generated)">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                        minValue="1" sequenceName="order_states_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1684046814517-3" author="KarimKhasan (generated)">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                        minValue="1" sequenceName="orders_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1684046814517-4" author="KarimKhasan (generated)">
+        <createTable tableName="courier_regions">
+            <column name="courier_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="courier_regions_pkey"/>
+            </column>
+            <column name="region" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="courier_regions_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1684046814517-5" author="KarimKhasan (generated)">
+        <createTable tableName="courier_working_hours">
+            <column name="courier_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="courier_working_hours_pkey"/>
+            </column>
+            <column name="interval_begin" type="TIME WITHOUT TIME ZONE">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="courier_working_hours_pkey"/>
+            </column>
+            <column name="interval_end" type="TIME WITHOUT TIME ZONE">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="courier_working_hours_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1684046814517-6" author="KarimKhasan (generated)">
+        <createTable tableName="couriers">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="couriers_pkey"/>
+            </column>
+            <column name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1684046814517-7" author="KarimKhasan (generated)">
+        <createTable tableName="order_delivery_hours">
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="order_delivery_hours_pkey"/>
+            </column>
+            <column name="interval_begin" type="TIME WITHOUT TIME ZONE">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="order_delivery_hours_pkey"/>
+            </column>
+            <column name="interval_end" type="TIME WITHOUT TIME ZONE">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="order_delivery_hours_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1684046814517-8" author="KarimKhasan (generated)">
+        <createTable tableName="order_states">
+            <column name="status" type="VARCHAR(31)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="order_states_pkey"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="courier_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1684046814517-9" author="KarimKhasan (generated)">
+        <createTable tableName="orders">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="orders_pkey"/>
+            </column>
+            <column name="cost" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="regions" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight" type="FLOAT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1684046814517-10" author="KarimKhasan (generated)">
+        <addForeignKeyConstraint baseColumnNames="state_id" baseTableName="orders"
+                                 constraintName="fk5q04pfeoqa75syktvry2pk3ae" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="order_states"/>
+    </changeSet>
+    <changeSet id="1684046814517-11" author="KarimKhasan (generated)">
+        <addForeignKeyConstraint baseColumnNames="courier_id" baseTableName="courier_working_hours"
+                                 constraintName="fk7no9r1x57jw9sg3j2ybvvwcj5" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="couriers"/>
+    </changeSet>
+    <changeSet id="1684046814517-12" author="KarimKhasan (generated)">
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_delivery_hours"
+                                 constraintName="fkcqunfy5fxg64jhncqw9sflku7" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="orders"/>
+    </changeSet>
+    <changeSet id="1684046814517-13" author="KarimKhasan (generated)">
+        <addForeignKeyConstraint baseColumnNames="courier_id" baseTableName="order_states"
+                                 constraintName="fko77xfj8ev28tt0hfwqvy6bl0p" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="couriers"/>
+    </changeSet>
+    <changeSet id="1684046814517-14" author="KarimKhasan (generated)">
+        <addForeignKeyConstraint baseColumnNames="courier_id" baseTableName="courier_regions"
+                                 constraintName="fkro7s6ktu4okreaxi13hmvq47a" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="couriers"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,20 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'ru.yandex'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

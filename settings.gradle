@@ -1,1 +1,6 @@
 rootProject.name = 'yandex-lavka'
+include 'data-access'
+include 'service'
+include 'web-api'
+include 'common'
+

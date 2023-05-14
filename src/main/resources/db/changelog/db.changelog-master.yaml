@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      db/changelog/changes/init.xml
