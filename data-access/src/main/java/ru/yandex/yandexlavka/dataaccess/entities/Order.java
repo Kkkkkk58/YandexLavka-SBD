@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import ru.yandex.yandexlavka.dataaccess.entities.orderstates.CreatedOrderState;
-import ru.yandex.yandexlavka.dataaccess.models.LocalTimeInterval;
 import ru.yandex.yandexlavka.dataaccess.entities.orderstates.OrderState;
+import ru.yandex.yandexlavka.dataaccess.exceptions.OrderException;
+import ru.yandex.yandexlavka.dataaccess.models.LocalTimeInterval;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -22,58 +23,70 @@ import java.util.Set;
 @ToString
 public class Order {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	@Setter(AccessLevel.NONE)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Setter(AccessLevel.NONE)
+    private Long id;
 
-	@Column(name = "weight", nullable = false)
-	@Basic(optional = false)
-	private float weight;
+    @Column(name = "weight", nullable = false)
+    @Basic(optional = false)
+    private float weight;
 
-	@Column(name = "regions", nullable = false)
-	@Basic(optional = false)
-	private int regions;
+    @Column(name = "regions", nullable = false)
+    @Basic(optional = false)
+    private int regions;
 
-	@ElementCollection(targetClass = LocalTimeInterval.class, fetch = FetchType.EAGER)
-	@CollectionTable(name = "order_delivery_hours", joinColumns = @JoinColumn(name = "order_id"))
-	private Set<LocalTimeInterval> deliveryHours = new HashSet<>();
+    @ElementCollection(targetClass = LocalTimeInterval.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "order_delivery_hours", joinColumns = @JoinColumn(name = "order_id"))
+    private Set<LocalTimeInterval> deliveryHours = new HashSet<>();
 
-	@Column(name = "cost", nullable = false)
-	@Basic(optional = false)
-	private int cost;
+    @Column(name = "cost", nullable = false)
+    @Basic(optional = false)
+    private int cost;
 
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@ToString.Exclude
-	private OrderState state;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private OrderState state;
 
-	@Builder
-	public Order(float weight, int regions, Set<LocalTimeInterval> deliveryHours, int cost) {
-		this.weight = weight;
-		this.regions = regions;
-		this.deliveryHours = deliveryHours;
-		this.cost = cost;
-		this.state = new CreatedOrderState(this, LocalDateTime.now());
-	}
+    @Builder
+    public Order(float weight, int regions, Set<LocalTimeInterval> deliveryHours, int cost) {
+        this.weight = weight;
+        this.regions = regions;
+        this.deliveryHours = deliveryHours;
+        this.cost = cost;
+        this.state = new CreatedOrderState(this, LocalDateTime.now());
+    }
 
-	public Set<LocalTimeInterval> getDeliveryHours() {
-		return Collections.unmodifiableSet(deliveryHours);
-	}
+    public Set<LocalTimeInterval> getDeliveryHours() {
+        return Collections.unmodifiableSet(deliveryHours);
+    }
 
-	public void proceed(LocalDateTime timestamp, Courier courier) {
-		state.proceed(timestamp, courier);
-	}
+    public void addDeliveryHours(LocalTimeInterval deliveryInterval) {
+        if (!deliveryHours.add(deliveryInterval)) {
+            throw OrderException.deliveryIntervalAlreadyExists(id, deliveryInterval);
+        }
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		Order order = (Order) o;
-		return id != null && Objects.equals(id, order.id);
-	}
+    public void deleteDeliveryHours(LocalTimeInterval deliveryInterval) {
+        if (!deliveryHours.remove(deliveryInterval)) {
+            throw OrderException.deliveryIntervalDoesNotExist(id, deliveryInterval);
+        }
+    }
 
-	@Override
-	public int hashCode() {
-		return getClass().hashCode();
-	}
+    public void proceed(LocalDateTime timestamp, Courier courier) {
+        state.proceed(timestamp, courier);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Order order = (Order) o;
+        return id != null && Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

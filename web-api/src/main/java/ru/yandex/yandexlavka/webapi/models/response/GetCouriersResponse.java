@@ -7,8 +7,8 @@ import java.util.List;
 
 @Builder
 public record GetCouriersResponse(
-    List<CourierDto> couriers,
-    Integer limit,
-    Integer offset
+        List<CourierDto> couriers,
+        Integer limit,
+        Integer offset
 ) {
 }

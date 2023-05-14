@@ -9,16 +9,16 @@ import ru.yandex.yandexlavka.dataaccess.entities.Courier;
 import ru.yandex.yandexlavka.dataaccess.entities.Order;
 import ru.yandex.yandexlavka.dataaccess.repositories.CourierRepository;
 import ru.yandex.yandexlavka.dataaccess.repositories.OrderRepository;
-import ru.yandex.yandexlavka.dataaccess.repositories.OrderStateRepository;
 import ru.yandex.yandexlavka.service.api.OrderService;
 import ru.yandex.yandexlavka.service.dto.order.CompleteOrder;
 import ru.yandex.yandexlavka.service.dto.order.CompleteOrderRequestDto;
 import ru.yandex.yandexlavka.service.dto.order.CreateOrderDto;
 import ru.yandex.yandexlavka.service.dto.order.OrderDto;
+import ru.yandex.yandexlavka.service.exceptions.EntityException;
 import ru.yandex.yandexlavka.service.mapping.OrderMappingExtensions;
 import ru.yandex.yandexlavka.service.mapping.StreamMappingExtensions;
+import ru.yandex.yandexlavka.service.validation.service.api.ValidationService;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,16 +29,24 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CourierRepository courierRepository;
+    private final ValidationService validationService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, CourierRepository courierRepository) {
+    public OrderServiceImpl(
+            OrderRepository orderRepository,
+            CourierRepository courierRepository,
+            ValidationService validationService) {
+
         this.orderRepository = orderRepository;
         this.courierRepository = courierRepository;
+        this.validationService = validationService;
     }
 
     @Override
     @Transactional
     public List<OrderDto> create(Collection<CreateOrderDto> createOrderDtos) {
+
+        validationService.validate(createOrderDtos);
 
         List<Order> orders = createOrderDtos.stream().map(
                 dto -> Order.builder()
@@ -54,8 +62,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto getById(Long id) {
-        // TODO
-        return orderRepository.findById(id).orElseThrow().asDto();
+        return getOrder(id).asDto();
     }
 
     @Override
@@ -68,10 +75,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto completeOrder(CompleteOrder completeOrder) {
 
-        Order order = orderRepository.findById(completeOrder.orderId()).orElseThrow();
-        Courier courier = courierRepository.findById(completeOrder.courierId()).orElseThrow();
+        Order order = getOrder(completeOrder.orderId());
+        Courier courier = getCourier(completeOrder.courierId());
 
-        order.proceed(LocalDateTime.now(), courier);
+        order.proceed(completeOrder.completeTime(), courier);
         return orderRepository.save(order).asDto();
     }
 
@@ -80,5 +87,13 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> completeOrders(CompleteOrderRequestDto completeOrderRequestDto) {
 
         return completeOrderRequestDto.completeInfo().stream().map(this::completeOrder).toList();
+    }
+
+    private Order getOrder(Long id) {
+        return orderRepository.findById(id).orElseThrow(() -> EntityException.entityNotFound(Order.class, id));
+    }
+
+    private Courier getCourier(Long id) {
+        return courierRepository.findById(id).orElseThrow(() -> EntityException.entityNotFound(Courier.class, id));
     }
 }

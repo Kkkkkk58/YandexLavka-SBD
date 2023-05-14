@@ -18,5 +18,6 @@ public interface OrderService {
     List<OrderDto> get(Pageable pageable);
 
     OrderDto completeOrder(CompleteOrder completeOrder);
+
     List<OrderDto> completeOrders(CompleteOrderRequestDto completeOrderRequestDto);
 }

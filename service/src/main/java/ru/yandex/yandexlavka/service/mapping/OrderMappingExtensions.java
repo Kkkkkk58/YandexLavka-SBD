@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 public class OrderMappingExtensions {
 
     public OrderDto asDto(Order order) {
-        LocalDateTime completedTime = (order.getState().getStatus() == OrderStatus.COMPLETED) ? order.getState().getTimestamp() : null;
+        LocalDateTime completedTime = (order.getState().getStatus() == OrderStatus.COMPLETED)
+                ? order.getState().getTimestamp() : null;
+
         return OrderDto.builder()
                 .id(order.getId())
                 .weight(order.getWeight())

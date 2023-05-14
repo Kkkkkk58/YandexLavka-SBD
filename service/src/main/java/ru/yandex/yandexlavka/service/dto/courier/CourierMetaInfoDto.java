@@ -13,5 +13,6 @@ public record CourierMetaInfoDto(
         Set<Integer> regions,
         Set<LocalTimeInterval> workingHours,
         Integer rating,
-        Integer earnings) {
+        Integer earnings
+) {
 }

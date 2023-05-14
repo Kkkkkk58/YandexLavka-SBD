@@ -14,8 +14,10 @@ import ru.yandex.yandexlavka.service.api.CourierService;
 import ru.yandex.yandexlavka.service.dto.courier.CourierDto;
 import ru.yandex.yandexlavka.service.dto.courier.CourierMetaInfoDto;
 import ru.yandex.yandexlavka.service.dto.courier.CreateCourierDto;
+import ru.yandex.yandexlavka.service.exceptions.EntityException;
 import ru.yandex.yandexlavka.service.mapping.CourierMappingExtensions;
 import ru.yandex.yandexlavka.service.mapping.StreamMappingExtensions;
+import ru.yandex.yandexlavka.service.validation.service.api.ValidationService;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -29,17 +31,24 @@ public class CourierServiceImpl implements CourierService {
 
     private final CourierRepository courierRepository;
     private final OrderStateRepository orderStateRepository;
+    private final ValidationService validationService;
 
     @Autowired
-    public CourierServiceImpl(CourierRepository courierRepository,
-                              OrderStateRepository orderStateRepository) {
+    public CourierServiceImpl(
+            CourierRepository courierRepository,
+            OrderStateRepository orderStateRepository,
+            ValidationService validationService) {
+
         this.courierRepository = courierRepository;
         this.orderStateRepository = orderStateRepository;
+        this.validationService = validationService;
     }
 
     @Override
     @Transactional
     public List<CourierDto> create(Collection<CreateCourierDto> createCourierDtos) {
+
+        validationService.validate(createCourierDtos);
 
         List<Courier> couriers = createCourierDtos.stream().map(
                 dto -> Courier.builder()
@@ -48,13 +57,13 @@ public class CourierServiceImpl implements CourierService {
                         .workingHours(dto.workingHours())
                         .build()
         ).toList();
+
         return courierRepository.saveAllAndFlush(couriers).stream().asCourierDto().toList();
     }
 
     @Override
     public CourierDto getById(Long id) {
-        Courier courier = courierRepository.findById(id).orElseThrow(() -> new RuntimeException("//TODO"));
-        return courier.asDto();
+        return getCourier(id).asDto();
     }
 
     @Override
@@ -64,7 +73,12 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public CourierMetaInfoDto getRatings(Long courierId, LocalDate startDate, LocalDate endDate) {
-        Courier courier = courierRepository.findById(courierId).orElseThrow();
+
+        if (endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("End date can't be before start date");
+        }
+
+        Courier courier = getCourier(courierId);
 
         return CourierMetaInfoDto.builder()
                 .id(courier.getId())
@@ -74,6 +88,10 @@ public class CourierServiceImpl implements CourierService {
                 .rating(getRating(courier, startDate, endDate))
                 .earnings(getEarnings(courier, startDate, endDate))
                 .build();
+    }
+
+    private Courier getCourier(Long id) {
+        return courierRepository.findById(id).orElseThrow(() -> EntityException.entityNotFound(Courier.class, id));
     }
 
     private Integer getEarnings(Courier courier, LocalDate startDate, LocalDate endDate) {
@@ -98,7 +116,7 @@ public class CourierServiceImpl implements CourierService {
             return null;
         }
 
-        return Math.toIntExact(courier.getType().getRatingCoefficient() * completedOrders / hours);
+        return Math.toIntExact(courier.getType().getRatingCoefficient() * (completedOrders / hours));
     }
 
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 import ru.yandex.yandexlavka.dataaccess.entities.Courier;
 import ru.yandex.yandexlavka.dataaccess.entities.Order;
+import ru.yandex.yandexlavka.dataaccess.exceptions.OrderStateException;
 import ru.yandex.yandexlavka.dataaccess.models.OrderStatus;
 
 import java.time.LocalDateTime;
@@ -52,8 +53,8 @@ public abstract class OrderState {
     public abstract void proceed(LocalDateTime timestamp, Courier courier);
 
     protected void validateTimestamp(LocalDateTime timestamp) {
-        if (timestamp.isBefore(getTimestamp())) {
-            throw new RuntimeException("//TODO");
+        if (getTimestamp().isAfter(timestamp)) {
+            throw OrderStateException.updateTimestampIsAfterCurrent(getTimestamp(), timestamp);
         }
     }
 

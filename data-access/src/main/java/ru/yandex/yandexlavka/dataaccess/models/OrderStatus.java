@@ -8,7 +8,7 @@ public enum OrderStatus {
     OrderStatus(String val) {
 
         if (!name().equals(val)) {
-            throw new RuntimeException("//TODO");
+            throw new IllegalArgumentException(val + " is not supported OrderStatus value");
         }
     }
 

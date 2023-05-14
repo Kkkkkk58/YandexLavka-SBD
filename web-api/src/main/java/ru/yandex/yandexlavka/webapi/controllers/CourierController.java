@@ -68,7 +68,7 @@ public class CourierController {
 
     @GetMapping(value = "meta-info/{courier_id}", produces = "application/json")
     public ResponseEntity<GetCourierMetaInfoResponse> getMetaInfo(
-            @PathVariable("courier_id") Long courierId,
+            @Positive @PathVariable("courier_id") Long courierId,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate) {
 
