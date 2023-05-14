@@ -77,7 +77,7 @@ public class CourierServiceImpl implements CourierService {
     }
 
     private Integer getEarnings(Courier courier, LocalDate startDate, LocalDate endDate) {
-        List<OrderState> orderStates = orderStateRepository.findByTimestampBetweenAndCourierAndStatus(startDate.atStartOfDay(), endDate.atStartOfDay(), courier, OrderStatus.DELIVERED);
+        List<OrderState> orderStates = orderStateRepository.findByTimestampBetweenAndCourierAndStatus(startDate.atStartOfDay(), endDate.atStartOfDay(), courier, OrderStatus.COMPLETED);
         if (orderStates.isEmpty()) {
             return null;
         }
@@ -92,7 +92,7 @@ public class CourierServiceImpl implements CourierService {
 
     private Integer getRating(Courier courier, LocalDate startDate, LocalDate endDate) {
         long hours = Duration.between(startDate.atStartOfDay(), endDate.atStartOfDay()).toHours();
-        long completedOrders = orderStateRepository.findByTimestampBetweenAndCourierAndStatus(startDate.atStartOfDay(), endDate.atStartOfDay(), courier, OrderStatus.DELIVERED).size();
+        long completedOrders = orderStateRepository.findByTimestampBetweenAndCourierAndStatus(startDate.atStartOfDay(), endDate.atStartOfDay(), courier, OrderStatus.COMPLETED).size();
 
         if (hours == 0 || completedOrders == 0) {
             return null;

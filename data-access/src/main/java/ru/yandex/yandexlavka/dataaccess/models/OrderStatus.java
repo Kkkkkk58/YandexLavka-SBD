@@ -3,8 +3,7 @@ package ru.yandex.yandexlavka.dataaccess.models;
 public enum OrderStatus {
 
     CREATED(Values.CREATED),
-    ASSIGNED(Values.ASSIGNED),
-    DELIVERED(Values.DELIVERED);
+    COMPLETED(Values.COMPLETED);
 
     OrderStatus(String val) {
 
@@ -16,7 +15,6 @@ public enum OrderStatus {
 
     public static class Values {
         public static final String CREATED = "CREATED";
-        public static final String ASSIGNED = "ASSIGNED";
-        public static final String DELIVERED = "DELIVERED";
+        public static final String COMPLETED = "COMPLETED";
     }
 }

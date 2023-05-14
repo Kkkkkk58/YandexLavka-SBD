@@ -11,25 +11,16 @@ import ru.yandex.yandexlavka.dataaccess.models.OrderStatus;
 import java.time.LocalDateTime;
 
 @Entity
-@DiscriminatorValue(OrderStatus.Values.DELIVERED)
+@DiscriminatorValue(OrderStatus.Values.COMPLETED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DeliveredOrderState extends OrderState {
+public class CompletedOrderState extends OrderState {
 
-    public DeliveredOrderState(Order order, LocalDateTime timestamp, Courier courier) {
-        super(OrderStatus.DELIVERED, timestamp, order, courier);
+    public CompletedOrderState(Order order, LocalDateTime timestamp, Courier courier) {
+        super(OrderStatus.COMPLETED, timestamp, order, courier);
     }
 
     @Override
     public void proceed(LocalDateTime timestamp, Courier courier) {
-        throw new RuntimeException("//TODO");
-    }
 
-    @Override
-    public void rollback(LocalDateTime timestamp) {
-
-        validateTimestamp(timestamp);
-        Order order = getOrder();
-        OrderState newState = new AssignedOrderState(order, timestamp, getCourier());
-        order.setState(newState);
     }
 }

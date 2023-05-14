@@ -25,14 +25,8 @@ public class CreatedOrderState extends OrderState {
 
         validateTimestamp(timestamp);
         Order order = getOrder();
-        OrderState newState = new AssignedOrderState(order, timestamp, courier);
+        OrderState newState = new CompletedOrderState(order, timestamp, courier);
         order.setState(newState);
-    }
-
-    @Override
-    public void rollback(LocalDateTime timestamp) {
-        // TODO
-        throw new RuntimeException("//todo");
     }
 
 }

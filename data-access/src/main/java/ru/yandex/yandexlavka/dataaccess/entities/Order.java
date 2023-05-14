@@ -37,7 +37,6 @@ public class Order {
 
 	@ElementCollection(targetClass = LocalTimeInterval.class, fetch = FetchType.EAGER)
 	@CollectionTable(name = "order_delivery_hours", joinColumns = @JoinColumn(name = "order_id"))
-//	@Column(name = "time_interval", nullable = false)
 	private Set<LocalTimeInterval> deliveryHours = new HashSet<>();
 
 	@Column(name = "cost", nullable = false)
@@ -59,6 +58,10 @@ public class Order {
 
 	public Set<LocalTimeInterval> getDeliveryHours() {
 		return Collections.unmodifiableSet(deliveryHours);
+	}
+
+	public void proceed(LocalDateTime timestamp, Courier courier) {
+		state.proceed(timestamp, courier);
 	}
 
 	@Override

@@ -50,7 +50,6 @@ public abstract class OrderState {
     }
 
     public abstract void proceed(LocalDateTime timestamp, Courier courier);
-    public abstract void rollback(LocalDateTime timestamp);
 
     protected void validateTimestamp(LocalDateTime timestamp) {
         if (timestamp.isBefore(getTimestamp())) {

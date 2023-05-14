@@ -13,6 +13,6 @@ public record OrderDto(
         int regions,
         Set<LocalTimeInterval> deliveryHours,
         int cost,
-        LocalDateTime stateTimestamp
+        LocalDateTime completedTime
 ) {
 }

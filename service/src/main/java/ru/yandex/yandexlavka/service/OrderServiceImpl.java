@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.yandexlavka.dataaccess.entities.Courier;
 import ru.yandex.yandexlavka.dataaccess.entities.Order;
-import ru.yandex.yandexlavka.dataaccess.models.OrderStatus;
 import ru.yandex.yandexlavka.dataaccess.repositories.CourierRepository;
 import ru.yandex.yandexlavka.dataaccess.repositories.OrderRepository;
+import ru.yandex.yandexlavka.dataaccess.repositories.OrderStateRepository;
 import ru.yandex.yandexlavka.service.api.OrderService;
 import ru.yandex.yandexlavka.service.dto.order.CompleteOrder;
 import ru.yandex.yandexlavka.service.dto.order.CompleteOrderRequestDto;
@@ -63,25 +63,16 @@ public class OrderServiceImpl implements OrderService {
 
         return orderRepository.findAll(pageable).stream().asOrderDto().toList();
     }
-    
+
     @Override
     @Transactional
     public OrderDto completeOrder(CompleteOrder completeOrder) {
 
-        // TODO Check why created state disappears
         Order order = orderRepository.findById(completeOrder.orderId()).orElseThrow();
         Courier courier = courierRepository.findById(completeOrder.courierId()).orElseThrow();
-        if (order.getState().getStatus().equals(OrderStatus.CREATED)) {
-            order.getState().proceed(LocalDateTime.now(), courier);
-//            orderStateRepository.save(order.getState());
-        }
-        if (!order.getState().getCourier().equals(courier)) {
-            throw new RuntimeException();
-        }
 
-        order.getState().proceed(LocalDateTime.now(), courier);
-        orderRepository.save(order);
-        return order.asDto();
+        order.proceed(LocalDateTime.now(), courier);
+        return orderRepository.save(order).asDto();
     }
 
     @Override

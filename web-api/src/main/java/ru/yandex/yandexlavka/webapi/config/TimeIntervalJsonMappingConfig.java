@@ -1,15 +1,11 @@
 package ru.yandex.yandexlavka.webapi.config;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.swagger.v3.core.util.Json;
-import jakarta.annotation.PostConstruct;
 import org.springframework.boot.jackson.JsonComponent;
 import ru.yandex.yandexlavka.dataaccess.models.LocalTimeInterval;
 
@@ -19,16 +15,6 @@ import java.time.format.DateTimeFormatter;
 
 @JsonComponent
 public class TimeIntervalJsonMappingConfig {
-
-    @PostConstruct
-    public void objectMapper() {
-
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(LocalTimeInterval.class, new TimeIntervalJsonSerializer())
-                .addDeserializer(LocalTimeInterval.class, new TimeIntervalJsonDeserializer());
-
-        Json.mapper().registerModule(module);
-    }
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 

@@ -1,10 +1,10 @@
 package ru.yandex.yandexlavka.webapi.controllers;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +16,7 @@ import ru.yandex.yandexlavka.webapi.models.request.CreateCourierRequest;
 import ru.yandex.yandexlavka.webapi.models.response.CreateCouriersResponse;
 import ru.yandex.yandexlavka.webapi.models.response.GetCourierMetaInfoResponse;
 import ru.yandex.yandexlavka.webapi.models.response.GetCouriersResponse;
+import ru.yandex.yandexlavka.webapi.pagination.LimitOffsetPageable;
 
 import java.time.LocalDate;
 
@@ -23,6 +24,8 @@ import java.time.LocalDate;
 @RequestMapping("/couriers")
 // TODO @Tag + javadoc + openapi stuff
 @Validated
+@CrossOrigin
+@RateLimiter(name = "basic")
 public class CourierController {
 
     private final CourierService courierService;
@@ -37,7 +40,7 @@ public class CourierController {
             @Positive @RequestParam(defaultValue = "1", required = false) Integer limit,
             @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer offset) {
 
-        Pageable pageable = PageRequest.of(offset, limit);
+        Pageable pageable = new LimitOffsetPageable(offset, limit);
 
         GetCouriersResponse response = GetCouriersResponse.builder()
                 .couriers(courierService.get(pageable))
