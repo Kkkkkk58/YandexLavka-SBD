@@ -1,5 +1,6 @@
 package ru.yandex.yandexlavka.webapi.handlers;
 
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.yandexlavka.common.exceptions.YandexLavkaException;
 import ru.yandex.yandexlavka.service.exceptions.EntityException;
-import ru.yandex.yandexlavka.webapi.models.response.BadRequestResponse;
-import ru.yandex.yandexlavka.webapi.models.response.NotFoundResponse;
-import ru.yandex.yandexlavka.webapi.models.response.UnprocessableEntityResponse;
-import ru.yandex.yandexlavka.webapi.models.response.ValidationErrorResponse;
+import ru.yandex.yandexlavka.webapi.models.response.*;
 import ru.yandex.yandexlavka.webapi.models.validation.Violation;
 
 import java.util.List;
@@ -80,5 +78,14 @@ public class ControllerExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new BadRequestResponse());
+    }
+
+    @ExceptionHandler(RequestNotPermitted.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ResponseEntity<TooManyRequestsResponse> handleTooManyRequestsException(RequestNotPermitted exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new TooManyRequestsResponse());
     }
 }
