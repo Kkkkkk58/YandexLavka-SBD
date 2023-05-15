@@ -43,6 +43,7 @@ class YandexLavkaApplicationTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // Idk how to run this in container :(
     @Test
     void contextLoads(ApplicationContext context) {
         assertThat(context).isNotNull();
