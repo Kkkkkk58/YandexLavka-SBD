@@ -72,7 +72,7 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
-    public CourierMetaInfoDto getRatings(Long courierId, LocalDate startDate, LocalDate endDate) {
+    public CourierMetaInfoDto getMetaInformation(Long courierId, LocalDate startDate, LocalDate endDate) {
 
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("End date can't be before start date");

@@ -27,6 +27,7 @@ public class CreatedOrderState extends OrderState {
         Order order = getOrder();
         OrderState newState = new CompletedOrderState(order, timestamp, courier);
         order.setState(newState);
+        courier.assignOrder(order);
     }
 
 }

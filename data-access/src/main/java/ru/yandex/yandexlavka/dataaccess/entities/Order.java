@@ -6,7 +6,7 @@ import org.hibernate.Hibernate;
 import ru.yandex.yandexlavka.dataaccess.entities.orderstates.CreatedOrderState;
 import ru.yandex.yandexlavka.dataaccess.entities.orderstates.OrderState;
 import ru.yandex.yandexlavka.dataaccess.exceptions.OrderException;
-import ru.yandex.yandexlavka.dataaccess.models.LocalTimeInterval;
+import ru.yandex.yandexlavka.dataaccess.models.embeddable.TimeInterval;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -36,9 +36,9 @@ public class Order {
     @Basic(optional = false)
     private int regions;
 
-    @ElementCollection(targetClass = LocalTimeInterval.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = TimeInterval.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "order_delivery_hours", joinColumns = @JoinColumn(name = "order_id"))
-    private Set<LocalTimeInterval> deliveryHours = new HashSet<>();
+    private Set<TimeInterval> deliveryHours = new HashSet<>();
 
     @Column(name = "cost", nullable = false)
     @Basic(optional = false)
@@ -49,7 +49,7 @@ public class Order {
     private OrderState state;
 
     @Builder
-    public Order(float weight, int regions, Set<LocalTimeInterval> deliveryHours, int cost) {
+    public Order(float weight, int regions, Set<TimeInterval> deliveryHours, int cost) {
         this.weight = weight;
         this.regions = regions;
         this.deliveryHours = deliveryHours;
@@ -57,17 +57,23 @@ public class Order {
         this.state = new CreatedOrderState(this, LocalDateTime.now());
     }
 
-    public Set<LocalTimeInterval> getDeliveryHours() {
+    public Order(Long id, float weight, int regions, Set<TimeInterval> deliveryHours, int cost) {
+        this(weight, regions, deliveryHours, cost);
+        this.id = id;
+    }
+
+
+    public Set<TimeInterval> getDeliveryHours() {
         return Collections.unmodifiableSet(deliveryHours);
     }
 
-    public void addDeliveryHours(LocalTimeInterval deliveryInterval) {
+    public void addDeliveryHours(TimeInterval deliveryInterval) {
         if (!deliveryHours.add(deliveryInterval)) {
             throw OrderException.deliveryIntervalAlreadyExists(id, deliveryInterval);
         }
     }
 
-    public void deleteDeliveryHours(LocalTimeInterval deliveryInterval) {
+    public void deleteDeliveryHours(TimeInterval deliveryInterval) {
         if (!deliveryHours.remove(deliveryInterval)) {
             throw OrderException.deliveryIntervalDoesNotExist(id, deliveryInterval);
         }

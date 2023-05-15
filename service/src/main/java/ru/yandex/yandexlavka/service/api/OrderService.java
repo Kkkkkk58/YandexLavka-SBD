@@ -1,7 +1,6 @@
 package ru.yandex.yandexlavka.service.api;
 
 import org.springframework.data.domain.Pageable;
-import ru.yandex.yandexlavka.service.dto.order.CompleteOrder;
 import ru.yandex.yandexlavka.service.dto.order.CompleteOrderRequestDto;
 import ru.yandex.yandexlavka.service.dto.order.CreateOrderDto;
 import ru.yandex.yandexlavka.service.dto.order.OrderDto;
@@ -16,8 +15,6 @@ public interface OrderService {
     OrderDto getById(Long id);
 
     List<OrderDto> get(Pageable pageable);
-
-    OrderDto completeOrder(CompleteOrder completeOrder);
 
     List<OrderDto> completeOrders(CompleteOrderRequestDto completeOrderRequestDto);
 }

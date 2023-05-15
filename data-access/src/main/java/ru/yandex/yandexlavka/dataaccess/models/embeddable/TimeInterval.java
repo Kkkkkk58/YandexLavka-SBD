@@ -1,4 +1,4 @@
-package ru.yandex.yandexlavka.dataaccess.models;
+package ru.yandex.yandexlavka.dataaccess.models.embeddable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
-public class LocalTimeInterval {
+public class TimeInterval {
 
     @Column(name = "interval_begin", nullable = false)
     private LocalTime intervalBegin;

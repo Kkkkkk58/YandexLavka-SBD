@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <couriers
+        id="1"
+        type="BIKE"
+    />
+
+    <courier_regions
+        courier_id="1"
+        region="58"
+    />
+    <courier_regions
+        courier_id="1"
+        region="77"
+    />
+
+    <order_states
+            status="COMPLETED"
+            id="1"
+            timestamp="2023-05-15 10:59:59.497988"
+            courier_id="1"
+    />
+    <orders
+        id="1"
+        cost="5"
+        regions="58"
+        weight="12"
+        state_id="1"
+    />
+
+</dataset>

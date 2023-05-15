@@ -17,5 +17,5 @@ public interface CourierService {
 
     List<CourierDto> get(Pageable pageable);
 
-    CourierMetaInfoDto getRatings(Long courierId, LocalDate startDate, LocalDate endDate);
+    CourierMetaInfoDto getMetaInformation(Long courierId, LocalDate startDate, LocalDate endDate);
 }

@@ -98,7 +98,7 @@ public class CourierController {
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate) {
 
-        CourierMetaInfoDto metaInfoDto = courierService.getRatings(courierId, startDate, endDate);
+        CourierMetaInfoDto metaInfoDto = courierService.getMetaInformation(courierId, startDate, endDate);
         GetCourierMetaInfoResponse response = GetCourierMetaInfoResponse.builder()
                 .id(metaInfoDto.id())
                 .type(metaInfoDto.type())

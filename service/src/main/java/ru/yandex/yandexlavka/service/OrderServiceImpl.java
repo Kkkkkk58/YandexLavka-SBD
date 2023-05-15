@@ -19,7 +19,9 @@ import ru.yandex.yandexlavka.service.mapping.OrderMappingExtensions;
 import ru.yandex.yandexlavka.service.mapping.StreamMappingExtensions;
 import ru.yandex.yandexlavka.service.validation.service.api.ValidationService;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -52,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
                 dto -> Order.builder()
                         .weight(dto.weight())
                         .regions(dto.regions())
-                        .deliveryHours(dto.deliveryHours())
+                        .deliveryHours(new HashSet<>(dto.deliveryHours()))
                         .cost(dto.cost())
                         .build()
         ).toList();
@@ -73,20 +75,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto completeOrder(CompleteOrder completeOrder) {
-
-        Order order = getOrder(completeOrder.orderId());
-        Courier courier = getCourier(completeOrder.courierId());
-
-        order.proceed(completeOrder.completeTime(), courier);
-        return orderRepository.save(order).asDto();
-    }
-
-    @Override
-    @Transactional
     public List<OrderDto> completeOrders(CompleteOrderRequestDto completeOrderRequestDto) {
 
-        return completeOrderRequestDto.completeInfo().stream().map(this::completeOrder).toList();
+        validationService.validate(completeOrderRequestDto);
+
+        List<Order> orders = new ArrayList<>();
+        for (CompleteOrder completeOrder : completeOrderRequestDto.completeInfo()) {
+            Order order = getOrder(completeOrder.orderId());
+            Courier courier = getCourier(completeOrder.courierId());
+
+            order.proceed(completeOrder.completeTime(), courier);
+            orders.add(order);
+        }
+
+        return orderRepository.saveAllAndFlush(orders).stream().asOrderDto().toList();
     }
 
     private Order getOrder(Long id) {

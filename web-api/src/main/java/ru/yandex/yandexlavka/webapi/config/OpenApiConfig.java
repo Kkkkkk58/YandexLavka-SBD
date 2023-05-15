@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.v3.core.jackson.ModelResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.yandex.yandexlavka.dataaccess.models.LocalTimeInterval;
+import ru.yandex.yandexlavka.dataaccess.models.embeddable.TimeInterval;
 
 @Configuration
 public class OpenApiConfig {
@@ -16,11 +16,12 @@ public class OpenApiConfig {
 
         // Anyway shows LocalTime structure instead of custom serialization :(
         SimpleModule module = new SimpleModule();
-        module.addSerializer(LocalTimeInterval.class, new TimeIntervalJsonMappingConfig.TimeIntervalJsonSerializer())
-                .addDeserializer(LocalTimeInterval.class, new TimeIntervalJsonMappingConfig.TimeIntervalJsonDeserializer());
+        module.addSerializer(TimeInterval.class, new TimeIntervalJsonMappingConfig.TimeIntervalJsonSerializer())
+                .addDeserializer(TimeInterval.class, new TimeIntervalJsonMappingConfig.TimeIntervalJsonDeserializer());
 
         return new ModelResolver(objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                .findAndRegisterModules()
                 .registerModule(module));
     }
 }

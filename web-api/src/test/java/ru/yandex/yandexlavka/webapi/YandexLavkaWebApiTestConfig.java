@@ -1,15 +1,13 @@
-package ru.yandex.yandexlavka.dataaccess;
+package ru.yandex.yandexlavka.webapi;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@ComponentScan("ru.yandex.yandexlavka.dataaccess")
+@ComponentScan("ru.yandex.yandexlavka.webapi")
 @EntityScan("ru.yandex.yandexlavka.dataaccess.entities")
-@EnableJpaRepositories("ru.yandex.yandexlavka.dataaccess.repositories")
-public class YandexLavkaDataAccessTestConfig {
+public class YandexLavkaWebApiTestConfig {
 }

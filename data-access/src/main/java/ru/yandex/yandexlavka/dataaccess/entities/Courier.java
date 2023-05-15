@@ -6,7 +6,7 @@ import org.hibernate.Hibernate;
 import ru.yandex.yandexlavka.dataaccess.entities.orderstates.OrderState;
 import ru.yandex.yandexlavka.dataaccess.exceptions.CourierException;
 import ru.yandex.yandexlavka.dataaccess.models.CourierType;
-import ru.yandex.yandexlavka.dataaccess.models.LocalTimeInterval;
+import ru.yandex.yandexlavka.dataaccess.models.embeddable.TimeInterval;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,9 +37,9 @@ public class Courier {
     @Column(name = "region", nullable = false)
     private Set<Integer> regions = new HashSet<>();
 
-    @ElementCollection(targetClass = LocalTimeInterval.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = TimeInterval.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "courier_working_hours", joinColumns = @JoinColumn(name = "courier_id"))
-    private Set<LocalTimeInterval> workingHours = new HashSet<>();
+    private Set<TimeInterval> workingHours = new HashSet<>();
 
     @OneToMany(mappedBy = "courier", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Getter(AccessLevel.PROTECTED)
@@ -47,17 +47,18 @@ public class Courier {
     private Set<OrderState> associatedOrdersStates = new HashSet<>();
 
     @Builder
-    public Courier(CourierType type, Set<Integer> regions, Set<LocalTimeInterval> workingHours) {
+    public Courier(CourierType type, Set<Integer> regions, Set<TimeInterval> workingHours) {
         this.type = type;
         this.regions = new HashSet<>(regions);
         this.workingHours = new HashSet<>(workingHours);
+        this.associatedOrdersStates = new HashSet<>();
     }
 
     public Set<Integer> getRegions() {
         return Collections.unmodifiableSet(regions);
     }
 
-    public Set<LocalTimeInterval> getWorkingHours() {
+    public Set<TimeInterval> getWorkingHours() {
         return Collections.unmodifiableSet(workingHours);
     }
 
@@ -77,13 +78,13 @@ public class Courier {
         }
     }
 
-    public void addWorkingHours(LocalTimeInterval workingInterval) {
+    public void addWorkingHours(TimeInterval workingInterval) {
         if (!workingHours.add(workingInterval)) {
             throw CourierException.workingIntervalAlreadyExists(id, workingInterval);
         }
     }
 
-    public void deleteWorkingHours(LocalTimeInterval workingInterval) {
+    public void deleteWorkingHours(TimeInterval workingInterval) {
         if (!workingHours.remove(workingInterval)) {
             throw CourierException.workingIntervalDoesNotExist(id, workingInterval);
         }

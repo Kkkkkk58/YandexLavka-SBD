@@ -1,7 +1,7 @@
 package ru.yandex.yandexlavka.dataaccess.exceptions;
 
 import ru.yandex.yandexlavka.common.exceptions.YandexLavkaException;
-import ru.yandex.yandexlavka.dataaccess.models.LocalTimeInterval;
+import ru.yandex.yandexlavka.dataaccess.models.embeddable.TimeInterval;
 
 public class CourierException extends YandexLavkaException {
 
@@ -18,11 +18,11 @@ public class CourierException extends YandexLavkaException {
     }
 
 
-    public static CourierException workingIntervalAlreadyExists(Long courierId, LocalTimeInterval workingInterval) {
+    public static CourierException workingIntervalAlreadyExists(Long courierId, TimeInterval workingInterval) {
         return new CourierException("Courier " + courierId + " already has " + workingInterval + " among work hours");
     }
 
-    public static CourierException workingIntervalDoesNotExist(Long courierId, LocalTimeInterval workingInterval) {
+    public static CourierException workingIntervalDoesNotExist(Long courierId, TimeInterval workingInterval) {
         return new CourierException("Courier " + courierId + " doesn't work at " + workingInterval);
     }
 

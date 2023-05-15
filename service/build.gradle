@@ -16,7 +16,8 @@ dependencies {
     api project(':data-access')
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     api 'org.springframework.boot:spring-boot-starter-validation'
-
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
@@ -29,4 +30,5 @@ tasks.named('bootJar') {
 
 tasks.named('jar') {
     enabled = true
+    archiveClassifier = ''
 }
